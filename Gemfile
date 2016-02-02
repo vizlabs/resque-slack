@@ -11,4 +11,3 @@ group :test do
   gem 'rspec'
 end
 
-gem 'slack-ruby-client'
