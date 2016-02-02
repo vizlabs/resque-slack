@@ -1,4 +1,6 @@
 require 'resque'
+require 'slack-ruby-client'
+require_relative 'notification.rb'
 
 module Resque
   module Failure
@@ -33,10 +35,10 @@ module Resque
       def self.configure
         yield self
         fail 'Slack channel and token are not configured.' unless configured?
-        Slack.configure do |c|
+        ::Slack.configure do |c|
           c.token = token
         end
-        self.client = Slack::Web::Client.new
+        self.client = ::Slack::Web::Client.new
         self.client.auth_test
       end
 
@@ -56,7 +58,7 @@ module Resque
       # Sends a HTTP Post to the Slack api.
       #
       def report_exception
-        self.class.client.chat_postMessage(channel: self.class.channel, text: text, as_user: true)
+        self.class.client.chat_postMessage(channel: self.class.channel, text: "```#{text}```", as_user: true)
       end
 
       # Text to be displayed in the Slack notification
