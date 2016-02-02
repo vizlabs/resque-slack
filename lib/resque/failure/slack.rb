@@ -36,10 +36,10 @@ module Resque
         yield self
         fail 'Slack channel and token are not configured.' unless configured?
         Slack.configure do |c|
-          c.token = self.class.token
+          c.token = token
         end
-        self.class.client = Slack::Web::Client.new
-        self.class.client.auth_test
+        self.client = Slack::Web::Client.new
+        self.client.auth_test
       end
 
       def self.configured?
