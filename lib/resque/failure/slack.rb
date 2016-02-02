@@ -6,12 +6,11 @@ module Resque
   module Failure
     class Slack < Base
       LEVELS = %i(verbose compact minimal)
-      SLACK_URL = 'https://slack.com/api'
 
       class << self
         attr_accessor :channel # Slack channel id.
         attr_accessor :token   # Team token
-
+        attr_accessor :client  # Slack client
         # Notification style:
         #
         # verbose: full backtrace (default)
@@ -36,6 +35,11 @@ module Resque
       def self.configure
         yield self
         fail 'Slack channel and token are not configured.' unless configured?
+        Slack.configure do |c|
+          c.token = self.class.token
+        end
+        self.class.client = Slack::Web::Client.new
+        self.class.client.auth_test
       end
 
       def self.configured?
@@ -54,9 +58,7 @@ module Resque
       # Sends a HTTP Post to the Slack api.
       #
       def report_exception
-        uri = URI.parse(SLACK_URL + '/chat.postMessage')
-        params = { 'channel' => self.class.channel, 'token' => self.class.token, 'text' => text }
-        Net::HTTP.post_form(uri, params)
+        self.class.client.chat_postMessage(channel: self.class.channel, text: text, as_user: true)
       end
 
       # Text to be displayed in the Slack notification
