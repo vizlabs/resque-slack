@@ -11,6 +11,7 @@ module Resque
         attr_accessor :channel # Slack channel id.
         attr_accessor :token   # Team token
         attr_accessor :client  # Slack client
+        attr_accessor :level_override
         # Notification style:
         #
         # verbose: full backtrace (default)
@@ -33,13 +34,15 @@ module Resque
       #     config.verbose = true or false, true is the default
       #   end
       def self.configure
+        self.level_override = {}
         yield self
-        fail 'Slack channel and token are not configured.' unless configured?
+        raise 'Slack channel and token are not configured.' unless configured?
         ::Slack.configure do |c|
           c.token = token
         end
         self.client = ::Slack::Web::Client.new
-        self.client.auth_test
+        client.auth_test
+        level_override.default = level
       end
 
       def self.configured?
@@ -61,12 +64,15 @@ module Resque
         self.class.client.chat_postMessage(channel: self.class.channel, text: "```#{text}```", as_user: true)
       end
 
+      def overriden_level
+        self.class.level_override[exception]
+      end
+
       # Text to be displayed in the Slack notification
       #
       def text
-        Notification.generate(self, self.class.level)
+        Notification.generate(self, overriden_level)
       end
     end
   end
 end
-

@@ -1,7 +1,6 @@
 require File.join(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Resque::Failure::Notification do
-
   Resque::Failure::Slack::LEVELS.each do |level|
     context "level #{level}" do
       it 'returns the wanted format text' do
@@ -23,6 +22,4 @@ describe Resque::Failure::Notification do
     exception = double('exception', to_s: 'exception', backtrace: ['backtrace'])
     Resque::Failure::Slack.new(exception, 'worker', 'queue', 'payload')
   end
-
 end
-
