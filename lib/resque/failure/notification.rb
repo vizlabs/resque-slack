@@ -1,7 +1,6 @@
 module Resque
   module Failure
     class Notification
-
       # Generate the text to be displayed in the Slack Notification
       #
       # failure: resque failure
@@ -73,4 +72,3 @@ module Resque
     end
   end
 end
-

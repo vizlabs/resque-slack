@@ -65,7 +65,7 @@ module Resque
       end
 
       def overriden_level
-        self.class.level_override[exception]
+        self.class.level_override[exception.to_s]
       end
 
       # Text to be displayed in the Slack notification
