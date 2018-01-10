@@ -29,7 +29,8 @@ module Resque
       # Returns the formatted payload linked to the failed job
       #
       def msg_payload
-        "Payload:\n#{format_message(@failure.payload.inspect.split('\n'))}"
+        backtrace = @failure.payload.inspect.split('\n') if @failure&.payload&.inspect
+        "Payload:\n#{format_message(backtrace)}"
       end
 
       # Returns the formatted exception linked to the failed job
