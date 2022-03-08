@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 gemspec
 
 group :development do
-  gem 'resque', '~>1.27.0'
+  gem 'resque'
 end
 
 group :test do
