@@ -3,7 +3,7 @@ $LOAD_PATH.push File.expand_path('../lib/resque/failure', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'resque-slack'
-  s.version     = '0.2.1'
+  s.version     = '0.2.2'
   s.authors     = ['Julien Blanchard']
   s.email       = ['julien@sideburns.eu']
   s.homepage    = 'https://www.github.com/julienXX/resque-slack'
@@ -15,6 +15,5 @@ Gem::Specification.new do |s|
   s.require_paths     = ['lib']
 
   s.add_runtime_dependency('resque', '>= 1.8')
-  s.add_runtime_dependency('slack-ruby-client')
   s.add_development_dependency('rake')
 end

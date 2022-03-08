@@ -1,6 +1,4 @@
 require 'resque'
-require 'uri'
-require 'net/http'
 
 module Resque
   module Failure
