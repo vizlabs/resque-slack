@@ -65,7 +65,7 @@ module Resque
 
       def format_message(obj)
         return '' unless obj
-        obj.map{ |l| "\t" + l }.join('\n')
+        obj.map{ |l| "\t" + l }.join("\n")
       end
 
       def exception
