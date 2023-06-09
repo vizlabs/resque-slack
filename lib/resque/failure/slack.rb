@@ -7,6 +7,19 @@ module Resque
     class Slack < Base
       LEVELS = %i(verbose compact minimal)
 
+      # NOTE: for testing and debugging:
+      #   failure      = Resque::Failure::Slack.new(exception[obj], worker[str], queue[str], payload[hash])
+      #                  #                          exception, "viz-bg:1234:matt_test", "matt_test", {"class"=>"MattTest", "args"=>{foo: 'bar'}}
+      #   failure.report_exception()
+      # OR
+      #   slack_client = Resque::Failure::Slack.client
+      #   chnl         = Resque::Failure::Slack.channel
+      #   slack_client.chat_postMessage(channel: chnl, text: "test message", as_user: true)
+      #   slack_client.chat_postMessage(channel: chnl, text: "```#{failure.text}```", as_user: true)
+
+      # Refrence:
+      #   text         = Resque::Failure::Notification.generate(self, overriden_level)
+
       class << self
         attr_accessor :channel # Slack channel id.
         attr_accessor :token   # Team token
@@ -61,6 +74,8 @@ module Resque
       # Sends a HTTP Post to the Slack api.
       #
       def report_exception
+        # NOTE: if "as_user" is false, messages will be sent from generic "bot" instead of the bot specific name that was used to integrate with your slack account
+        # TODO: confirm the above is accurate
         self.class.client.chat_postMessage(channel: self.class.channel, text: "```#{text}```", as_user: true)
       end
 
