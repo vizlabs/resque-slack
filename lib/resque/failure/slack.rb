@@ -76,7 +76,8 @@ module Resque
       def report_exception
         # NOTE: if "as_user" is false, messages will be sent from generic "bot" instead of the bot specific name that was used to integrate with your slack account
         # TODO: confirm the above is accurate
-        self.class.client.chat_postMessage(channel: self.class.channel, text: "```#{text}```", as_user: true)
+
+        self.class.client.chat_postMessage(channel: self.class.channel, text: text(), as_user: true)
       end
 
       def overriden_level

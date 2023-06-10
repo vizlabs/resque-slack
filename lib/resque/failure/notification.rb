@@ -23,7 +23,7 @@ module Resque
       # Returns the worker & queue linked to the failed job
       #
       def msg_worker
-        "#{@failure.worker} failed processing #{@failure.queue}"
+        "`#{@failure.worker}` failed processing `#{@failure.queue}`"
       end
 
       # Returns the formatted payload linked to the failed job
@@ -36,7 +36,7 @@ module Resque
       # Returns the formatted exception linked to the failed job
       #
       def msg_exception
-        "Exception:\n#{exception}"
+        "Exception:\n`#{exception}`"
       end
 
       # Returns the formatted exception linked to the failed job with backtrace
@@ -65,7 +65,7 @@ module Resque
 
       def format_message(obj)
         return '' unless obj
-        obj.map{ |l| "\t" + l }.join("\n")
+        "```" + obj.map{ |l| "\t" + l }.join("\n") + "```"
       end
 
       def exception
