@@ -77,7 +77,9 @@ module Resque
         # NOTE: if "as_user" is false, messages will be sent from generic "bot" instead of the bot specific name that was used to integrate with your slack account
         # TODO: confirm the above is accurate
 
-        self.class.client.chat_postMessage(channel: self.class.channel, text: text(), as_user: true)
+        text().each do |txt|
+          self.class.client.chat_postMessage(channel: self.class.channel, text: txt, as_user: true)
+        end
       end
 
       def overriden_level
@@ -87,6 +89,7 @@ module Resque
       # Text to be displayed in the Slack notification
       #
       def text
+        # REM: returns an array of strings with length 1+
         Notification.generate(self, overriden_level)
       end
     end
