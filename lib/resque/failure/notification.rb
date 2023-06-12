@@ -39,16 +39,16 @@ module Resque
         "Exception:\n`#{@failure.exception}`"
       end
 
-      # Returns the formatted exception linked to the failed job with backtrace
+      # Returns the formatted exception backtrace
       #
-      def msg_exception_with_backtrace
-        "#{msg_exception}\n#{format_message(@failure.exception&.backtrace)}"
+      def msg_backtrace
+        format_message(@failure.exception&.backtrace)
       end
 
       # Returns the verbose text notification
       #
       def verbose
-        "#{msg_worker}\n#{msg_payload}\n#{msg_exception_with_backtrace}"
+        "#{msg_worker}\n#{msg_payload}\n#{msg_exception}\n#{msg_backtrace}"
       end
 
       # Returns the compact text notification
