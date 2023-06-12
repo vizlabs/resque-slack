@@ -78,6 +78,13 @@ module Resque
         # TODO: confirm the above is accurate
 
         text().each do |txt|
+          # According to API documentation: https://api.slack.com/methods/chat.postMessage
+          # Message length should be 4,000 char or less, and will be truncated after 40,000 char
+          #
+          # NOTE: this method's return value appears to only contain the last message that was actually sent
+          #       when messages are auto split due to length
+          # NOTE: postMessage auto-splitting is not smart enough to split inbetween multiple sections of "```"
+
           self.class.client.chat_postMessage(channel: self.class.channel, text: txt, as_user: true)
         end
       end
