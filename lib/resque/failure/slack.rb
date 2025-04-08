@@ -7,22 +7,9 @@ module Resque
     class Slack < Base
       LEVELS = %i(verbose compact minimal)
 
-      # NOTE: for testing and debugging:
-      #   failure      = Resque::Failure::Slack.new(exception[obj], worker[str], queue[str], payload[hash])
-      #                  #                          exception, "viz-bg:1234:matt_test", "matt_test", {"class"=>"MattTest", "args"=>{foo: 'bar'}}
-      #   failure.report_exception()
-      # OR
-      #   slack_client = Resque::Failure::Slack.client
-      #   chnl         = Resque::Failure::Slack.channel
-      #   slack_client.chat_postMessage(channel: chnl, text: "test message", as_user: true)
-      #   slack_client.chat_postMessage(channel: chnl, text: "```#{failure.text}```", as_user: true)
-
-      # Refrence:
-      #   text         = Resque::Failure::Notification.generate(self, overriden_level)
-
       class << self
         attr_accessor :channel # Slack channel id.
-        attr_accessor :token   # Team token
+        attr_accessor :token   # Slack token (several types seem to work)
         attr_accessor :client  # Slack client
         attr_accessor :level_override
         # Notification style:
@@ -43,13 +30,16 @@ module Resque
       # @example Configure your Slack account:
       #   Resque::Failure::Slack.configure do |config|
       #     config.channel = 'CHANNEL_ID'
-      #     config.token = 'TOKEN'
+      #     config.token   = 'TOKEN'
       #     config.verbose = true or false, true is the default
       #   end
       def self.configure
         self.level_override = {}
         yield self
         raise 'Slack channel and token are not configured.' unless configured?
+
+        # TODO: initialize with proper usage of oAuth token?
+        #       see: https://github.com/slack-ruby/slack-ruby-client/blob/master/examples/oauth_v2/oauth_v2.rb
         ::Slack.configure do |c|
           c.token = token
         end

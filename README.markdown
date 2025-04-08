@@ -26,13 +26,12 @@ Configure your channel, token and notification verbosity:
 require 'resque/failure/slack'
 
 Resque::Failure::Slack.configure do |config|
-  config.channel = 'CHANNEL_ID'  # required
-  config.token = 'TEAM_TOKEN'    # required
-  config.level = verbosity_level # optional
+  config.channel = 'CHANNEL_ID'    # required
+  config.token   = 'TOKEN'         # required
+  config.level   = verbosity_level # optional
 end
 
 Resque::Failure.backend = Resque::Failure::Slack
-
 ```
 
 Level can be:
@@ -40,7 +39,27 @@ Level can be:
 - compact: worker, payload and exception
 - minimal: worker and payload only
 
-NB: Your team token is found [here](https://api.slack.com/#auth)
+#### Test Integration
+
+Open `rails console`
+
+```
+exception = StandardError.new("Force an exception")
+exception.set_backtrace(caller)
+# --------------------------
+#                                    exception<obj>, worker<str>,             queue<str>,  payload<hash>
+failure = Resque::Failure::Slack.new(exception,      "viz-bg:1234:matt_test", "matt_test", {"class"=>"MattTest", "args"=>{foo: 'bar'}})
+failure.report_exception()
+# OR
+slack_client = Resque::Failure::Slack.client
+chnl         = Resque::Failure::Slack.channel
+slack_client.chat_postMessage(channel: chnl, text: "```#{failure.text}```", as_user: true)
+#   AKA
+slack_client.chat_postMessage(channel: chnl, text: "test message", as_user: true)
+```
+
+Additional reference:
+`text = Resque::Failure::Notification.generate(self, overriden_level)`
 
 ## Contributing
 
