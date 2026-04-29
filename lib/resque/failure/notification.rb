@@ -1,6 +1,11 @@
 module Resque
   module Failure
     class Notification
+
+      BACKTRACE_CLEANER = ActiveSupport::BacktraceCleaner.new
+      BACKTRACE_CLEANER.add_filter   { |line| line.delete_prefix("#{Rails.root}/") } # strip the Rails.root prefix
+      BACKTRACE_CLEANER.add_silencer { |line| /\/gems\/|\/\.rbenv\//.match?(line) } # skip any irrelevant lines
+
       # Generate the text to be displayed in the Slack Notification
       #
       # failure: resque failure
@@ -43,7 +48,14 @@ module Resque
       # Returns the formatted exception backtrace
       #
       def msg_backtrace
-        format_message(@failure.exception&.backtrace)
+        e = @failure.exception
+        if e&.backtrace
+          # Clean up stacktrace from irrelevant lines:
+          cleaned_backtrace = BACKTRACE_CLEANER.clean(e.backtrace)
+          cleaned_backtrace << 'No relevant backtrace.' if cleaned_backtrace.empty?
+          e.set_backtrace(cleaned_backtrace)
+        end
+        format_message(e&.backtrace)
       end
 
       # Returns the verbose text notification
