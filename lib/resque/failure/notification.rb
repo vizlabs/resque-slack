@@ -21,7 +21,7 @@ module Resque
 
         @@backtrace_cleaner = ActiveSupport::BacktraceCleaner.new
         @@backtrace_cleaner.add_filter   { |line| line.delete_prefix("#{Rails.root}/") } # strip the Rails.root prefix
-        @@backtrace_cleaner.add_silencer { |line| %r{/gems/|/\.rbenv/}.match?(line) } # skip any irrelevant lines
+        @@backtrace_cleaner.add_silencer { |line| %r{/gems/|/\.rbenv/|vendor/bundle/}.match?(line) } # skip any irrelevant lines
       end
 
       def generate
